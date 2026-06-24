@@ -1,0 +1,229 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@300;400;500&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background: radial-gradient(circle at top, #0a0a0a, #000);
+    color:#fff;
+    font-family:'Poppins',sans-serif;
+    overflow-x:hidden;
+}
+
+/* ==========================
+   HERO PREMIUM
+========================== */
+
+.hero{
+    min-height:40vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding:80px 20px;
+    position:relative;
+    border-bottom:1px solid rgba(255,255,255,.06);
+    overflow:hidden;
+}
+
+/* Luz ambiental suave */
+.hero::before{
+    content:"";
+    position:absolute;
+    width:600px;
+    height:600px;
+    background:radial-gradient(circle, rgba(212,175,55,.15), transparent 70%);
+    top:-200px;
+    left:50%;
+    transform:translateX(-50%);
+    filter:blur(40px);
+    animation:floatGlow 6s ease-in-out infinite;
+}
+
+@keyframes floatGlow{
+    0%,100%{ transform:translateX(-50%) translateY(0); }
+    50%{ transform:translateX(-50%) translateY(20px); }
+}
+
+.hero-content h1{
+    font-family:'Cormorant Garamond',serif;
+    font-size:clamp(2.8rem,6vw,5.5rem);
+    font-weight:700;
+    letter-spacing:6px;
+    text-transform:uppercase;
+    color:#fff;
+    position:relative;
+    text-shadow:0 0 25px rgba(0,0,0,.6);
+}
+
+.hero-content h1::after{
+    content:"";
+    width:140px;
+    height:2px;
+    background:linear-gradient(90deg, transparent, #d4af37, transparent);
+    display:block;
+    margin:25px auto 0;
+}
+
+/* ==========================
+   GALERÍA
+========================== */
+
+.gallery-section{
+    padding:80px 30px 120px;
+}
+
+/* Masonry moderno */
+#gallery{
+    max-width:1800px;
+    margin:auto;
+    column-count:4;
+    column-gap:22px;
+}
+
+@media(max-width:1200px){
+    #gallery{ column-count:3; }
+}
+
+@media(max-width:768px){
+    #gallery{ column-count:2; }
+}
+
+@media(max-width:480px){
+    #gallery{ column-count:1; }
+}
+
+/* ==========================
+   FOTOS PREMIUM
+========================== */
+
+.photo{
+    margin-bottom:22px;
+    break-inside:avoid;
+    position:relative;
+    border-radius:20px;
+    overflow:hidden;
+
+    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,.08);
+
+    transition:all .5s ease;
+    backdrop-filter:blur(6px);
+}
+
+/* brillo lateral elegante */
+.photo::after{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-100%;
+    width:50%;
+    height:100%;
+    background:linear-gradient(
+        to right,
+        transparent,
+        rgba(255,255,255,.08),
+        transparent
+    );
+    transform:skewX(-20deg);
+    transition:.7s ease;
+}
+
+.photo:hover::after{
+    left:120%;
+}
+
+.photo:hover{
+    transform:translateY(-8px) scale(1.01);
+    border-color:rgba(212,175,55,.6);
+    box-shadow:
+        0 0 30px rgba(212,175,55,.15),
+        0 20px 50px rgba(0,0,0,.7);
+}
+
+/* ==========================
+   IMÁGENES (SIN CORTAR)
+========================== */
+
+.photo img{
+    width:100%;
+    height:auto;
+    display:block;
+    object-fit:contain;
+    transition:transform 1s ease, filter .6s ease;
+    filter:brightness(.95) contrast(1.05);
+}
+
+.photo:hover img{
+    transform:scale(1.04);
+    filter:brightness(1.1) contrast(1.15);
+}
+
+/* ==========================
+   OVERLAY SUAVE
+========================== */
+
+.photo::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(
+        to top,
+        rgba(0,0,0,.25),
+        transparent 60%
+    );
+    opacity:0;
+    transition:.4s ease;
+}
+
+.photo:hover::before{
+    opacity:1;
+}
+
+/* ==========================
+   SCROLLBAR PREMIUM
+========================== */
+
+::-webkit-scrollbar{
+    width:10px;
+}
+
+::-webkit-scrollbar-track{
+    background:#000;
+}
+
+::-webkit-scrollbar-thumb{
+    background:linear-gradient(#d4af37, #8a6d1d);
+    border-radius:20px;
+}
+
+::-webkit-scrollbar-thumb:hover{
+    background:#f2cb5c;
+}
+
+/* ==========================
+   ANIMACIÓN SUAVE
+========================== */
+
+.hero,
+.photo{
+    animation:fadeUp .9s ease both;
+}
+
+@keyframes fadeUp{
+    from{
+        opacity:0;
+        transform:translateY(25px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
