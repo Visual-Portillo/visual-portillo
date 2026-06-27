@@ -1,113 +1,112 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    const imagenes = document.querySelectorAll("#gallery img");
+    /* ================= ELEMENTOS ================= */
+    const search = document.getElementById("search");
+    const cards = Array.from(document.querySelectorAll(".card"));
 
+    /* ================= SEARCH PREMIUM ================= */
+    if (search) {
+        search.addEventListener("input", () => {
+            const value = search.value.toLowerCase().trim();
+
+            cards.forEach(card => {
+                const text = card.innerText.toLowerCase();
+                const match = text.includes(value);
+
+                card.style.display = match ? "block" : "none";
+            });
+        });
+    }
+
+    /* ================= LIGHTBOX ULTRA ================= */
     const lightbox = document.createElement("div");
     lightbox.id = "lightbox";
 
-    lightbox.innerHTML = `
-        <img id="imagenActiva" alt="">
-        <div id="contador"></div>
-    `;
+    const img = document.createElement("img");
+    img.id = "imagen";
 
+    lightbox.appendChild(img);
     document.body.appendChild(lightbox);
 
-    const imagenActiva = document.getElementById("imagenActiva");
-    const contador = document.getElementById("contador");
+    let currentIndex = 0;
 
-    let indice = 0;
-
-    function mostrarImagen(i){
-
-        indice = i;
-
-        imagenActiva.src = imagenes[indice].src;
-
-        contador.textContent =
-        `${indice + 1} / ${imagenes.length}`;
-
-        lightbox.classList.add("activo");
-
+    function openLightbox(index){
+        currentIndex = index;
+        img.src = cards[currentIndex].querySelector("img").src;
+        lightbox.classList.add("active");
+        document.body.style.overflow = "hidden";
     }
 
-    imagenes.forEach((img,index)=>{
+    function closeLightbox(){
+        lightbox.classList.remove("active");
+        document.body.style.overflow = "auto";
+    }
 
-        img.style.opacity = "0";
-        img.style.transform = "translateY(20px)";
+    function nextImage(){
+        currentIndex = (currentIndex + 1) % cards.length;
+        img.src = cards[currentIndex].querySelector("img").src;
+    }
 
-        setTimeout(()=>{
+    function prevImage(){
+        currentIndex = (currentIndex - 1 + cards.length) % cards.length;
+        img.src = cards[currentIndex].querySelector("img").src;
+    }
 
-            img.style.transition =
-            "opacity .8s ease, transform .8s ease";
+    /* ================= EVENTO CLICK EN IMÁGENES ================= */
+    cards.forEach((card, index) => {
+        const image = card.querySelector("img");
 
-            img.style.opacity = "1";
-            img.style.transform = "translateY(0)";
-
-        },index * 20);
-
-        img.addEventListener("click",()=>{
-
-            mostrarImagen(index);
-
+        image.addEventListener("click", () => {
+            openLightbox(index);
         });
-
     });
 
-    lightbox.addEventListener("click",(e)=>{
-
-        if(
-            e.target === lightbox ||
-            e.target === contador
-        ){
-
-            lightbox.classList.remove("activo");
-
+    /* ================= LIGHTBOX CONTROLS ================= */
+    lightbox.addEventListener("click", (e) => {
+        if (e.target === lightbox) {
+            closeLightbox();
         }
-
     });
 
-    document.addEventListener("keydown",(e)=>{
+    document.addEventListener("keydown", (e) => {
+        if (!lightbox.classList.contains("active")) return;
 
-        if(!lightbox.classList.contains("activo")) return;
+        if (e.key === "Escape") closeLightbox();
+        if (e.key === "ArrowRight") nextImage();
+        if (e.key === "ArrowLeft") prevImage();
+    });
 
-        if(e.key === "Escape"){
+    /* ================= SWIPE MOBILE ================= */
+    let startX = 0;
 
-            lightbox.classList.remove("activo");
+    lightbox.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
+    });
 
-        }
+    lightbox.addEventListener("touchend", (e) => {
+        let endX = e.changedTouches[0].clientX;
 
-        if(e.key === "ArrowRight"){
+        if (startX - endX > 50) nextImage();
+        if (endX - startX > 50) prevImage();
+    });
 
-            indice++;
-
-            if(indice >= imagenes.length){
-
-                indice = 0;
-
+    /* ================= ANIMACIÓN PREMIUM DE ENTRADA ================= */
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = 1;
+                entry.target.style.transform = "translateY(0)";
+                entry.target.style.transition = "0.7s ease";
             }
-
-            mostrarImagen(indice);
-
-        }
-
-        if(e.key === "ArrowLeft"){
-
-            indice--;
-
-            if(indice < 0){
-
-                indice = imagenes.length - 1;
-
-            }
-
-            mostrarImagen(indice);
-
-        }
-
+        });
+    }, {
+        threshold: 0.1
     });
 
-    console.log(
-        `CLICKEO Premium Gallery cargada con ${imagenes.length} fotografías`
-    );
+    cards.forEach(card => {
+        card.style.opacity = 0;
+        card.style.transform = "translateY(25px)";
+        observer.observe(card);
+    });
 
 });
